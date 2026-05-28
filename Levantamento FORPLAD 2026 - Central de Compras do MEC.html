@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Levantamento de Demandas — Catálogo Padronizado das IFES | FORPLAD / MEC</title>
+<style>
+:root{--azul:#1F4E79;--azul2:#2E75B6;--azul-claro:#BDD7EE;--azul-bg:#EBF3FB;--verde:#375623;--verde-claro:#E2EFDA;--cinza:#F5F5F5;--borda:#D0D8E0;--texto:#1a2535;--muted:#64748b;--branco:#fff;--radius:10px;--shadow:0 2px 12px rgba(31,78,121,.10)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:15px;color:var(--texto);background:#eef3f8;line-height:1.55}
+a{color:var(--azul2)}
+
+/* ── HEADER ─────────────────────────────── */
+.header{background:linear-gradient(135deg,var(--azul) 0%,#2a6099 100%);color:#fff;padding:0}
+.header-inner{max-width:900px;margin:0 auto;padding:28px 32px 22px;display:flex;align-items:center;gap:24px}
+.logo-box{flex-shrink:0;width:72px;height:72px;background:rgba(255,255,255,.15);border-radius:12px;border:1.5px solid rgba(255,255,255,.3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.logo-box .lg1{font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.75)}
+.logo-box .lg2{font-size:22px;font-weight:900;color:#fff;letter-spacing:-1px}
+.logo-box .lg3{font-size:8px;color:rgba(255,255,255,.6);letter-spacing:1px}
+.header-txt h1{font-size:20px;font-weight:700;line-height:1.2;margin-bottom:4px}
+.header-txt p{font-size:13px;color:rgba(255,255,255,.75)}
+.header-bar{background:rgba(0,0,0,.15);padding:10px 32px;max-width:none}
+.header-bar-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.header-bar span{font-size:12px;color:rgba(255,255,255,.7)}
+.badge-mec{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:3px 12px;font-size:11px;color:rgba(255,255,255,.85);font-weight:600;letter-spacing:.5px}
+
+/* ── PROGRESSO ──────────────────────────── */
+.prog-wrap{background:#fff;border-bottom:1px solid var(--borda);padding:14px 32px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.prog-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.prog-bar{flex:1;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--azul2),var(--azul));border-radius:3px;transition:width .4s ease;width:0%}
+.prog-label{font-size:12px;color:var(--muted);white-space:nowrap}
+.prog-pct{font-size:13px;font-weight:700;color:var(--azul);min-width:34px;text-align:right}
+
+/* ── LAYOUT ─────────────────────────────── */
+.main{max-width:900px;margin:0 auto;padding:28px 24px 60px}
+
+/* ── CARD ───────────────────────────────── */
+.card{background:#fff;border-radius:var(--radius);border:1px solid var(--borda);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+.card-head{background:var(--azul-bg);border-bottom:1px solid var(--borda);padding:14px 22px;display:flex;align-items:center;gap:10px}
+.card-head .num{width:26px;height:26px;background:var(--azul);color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-head h2{font-size:15px;font-weight:700;color:var(--azul);flex:1}
+.card-body{padding:22px}
+
+/* ── INSTRUÇÃO ──────────────────────────── */
+.instrucao{background:var(--azul-bg);border:1px solid var(--azul-claro);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--azul);margin-bottom:20px;line-height:1.6}
+.instrucao ul{margin-top:6px;padding-left:18px}
+.instrucao li{margin-bottom:4px}
+
+/* ── CAMPOS ─────────────────────────────── */
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--texto);margin-bottom:6px}
+.req{color:#c0392b;margin-left:2px}
+.opt{font-size:12px;font-weight:400;color:var(--muted)}
+.field input[type=text],.field input[type=email],.field input[type=tel],.field select,.field textarea{width:100%;padding:9px 12px;border:1.5px solid var(--borda);border-radius:7px;font-size:14px;font-family:inherit;color:var(--texto);background:#fff;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--azul2);box-shadow:0 0 0 3px rgba(46,117,182,.12)}
+.field select[disabled],.field input[readonly]{background:#f8fafc;color:var(--muted)}
+.field textarea{resize:vertical;min-height:80px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.field-note{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* ── RADIO / CHECK ──────────────────────── */
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border:1.5px solid var(--borda);border-radius:7px;cursor:pointer;transition:all .15s;font-size:13.5px}
+.opt-item:hover{border-color:var(--azul2);background:var(--azul-bg)}
+.opt-item input{margin-top:2px;flex-shrink:0;accent-color:var(--azul2);width:15px;height:15px}
+.opt-item.selected{border-color:var(--azul2);background:var(--azul-bg)}
+
+/* ── GRID GRUPOS ────────────────────────── */
+.grupos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:9px}
+.grupo-card{border:1.5px solid var(--borda);border-radius:8px;padding:10px 13px;cursor:pointer;transition:all .15s;display:flex;align-items:flex-start;gap:9px;font-size:13.5px;line-height:1.4;background:#fff}
+.grupo-card:hover{border-color:var(--azul2);background:var(--azul-bg)}
+.grupo-card.on{border-color:var(--azul);background:var(--azul-bg);font-weight:600}
+.grupo-card input{flex-shrink:0;margin-top:2px;accent-color:var(--azul);width:15px;height:15px}
+.grupo-num{font-size:11px;color:var(--muted);background:#f1f5f9;border-radius:4px;padding:1px 5px;flex-shrink:0;margin-top:2px}
+.sel-count{font-size:13px;color:var(--muted);margin-bottom:12px}
+.sel-count strong{color:var(--azul);font-size:15px}
+
+/* ── SUBFORMULÁRIO ──────────────────────── */
+.subform{border:2px solid var(--azul);border-radius:10px;margin-bottom:14px;overflow:hidden;display:none;animation:fadeIn .25s ease}
+.subform.on{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.sf-head{background:var(--azul);padding:14px 20px;display:flex;align-items:center;gap:12px}
+.sf-head .sf-num{font-size:11px;color:var(--azul-claro);flex-shrink:0}
+.sf-head .sf-nome{font-size:15px;font-weight:700;color:#fff;flex:1}
+.sf-head .sf-ok{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,.6);flex-shrink:0;transition:all .2s}
+.sf-head .sf-ok.done{background:var(--verde-claro);border-color:#5cb85c;color:#5cb85c}
+.sf-body{padding:20px;background:#fff}
+.sf-q{margin-bottom:18px}
+.sf-q label{display:block;font-size:13px;font-weight:600;color:var(--texto);margin-bottom:8px}
+.cond-txt{display:none;margin-top:10px}
+.cond-txt.on{display:block}
+
+/* ── EQUIPE ─────────────────────────────── */
+.membro{display:grid;grid-template-columns:2.5fr 1.5fr 2fr;gap:10px;margin-bottom:10px}
+.membro-label{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px}
+
+/* ── RODAPÉ AÇÕES ───────────────────────── */
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .18s}
+.btn-primary{background:var(--azul);color:#fff}
+.btn-primary:hover{background:#163a5c}
+.btn-secondary{background:#fff;color:var(--azul);border:2px solid var(--azul)}
+.btn-secondary:hover{background:var(--azul-bg)}
+.btn-success{background:var(--verde);color:#fff}
+.btn-success:hover{background:#26401a}
+.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── FOOTER ─────────────────────────────── */
+.footer{text-align:center;padding:20px;font-size:12px;color:var(--muted)}@keyframes spin{to{stroke-dashoffset:-31.4}}
+.grupo-card{position:relative}
+.tooltip{display:none;position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);background:#1a2535;color:#fff;border-radius:8px;padding:10px 14px;font-size:12.5px;line-height:1.6;width:260px;z-index:999;box-shadow:0 4px 18px rgba(0,0,0,.25);pointer-events:none}
+.tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#1a2535}
+.tooltip strong{display:block;color:#BDD7EE;margin-bottom:4px;font-size:13px}
+.grupo-card:hover .tooltip{display:block}
+
+
+/* ── ALERTA ─────────────────────────────── */
+.alerta{background:#fff3cd;border:1px solid #ffc107;border-radius:7px;padding:10px 14px;font-size:13px;color:#856404;margin-bottom:16px}
+
+@media(max-width:600px){
+.header-inner{flex-direction:column;text-align:center;gap:14px}
+.row2,.row3,.membro{grid-template-columns:1fr}
+.grupos-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo-box" style="background:transparent;border:none;padding:0;width:auto">
+      <img src="data:image/jpeg;base64,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" alt="IFES FORPLAD" style="height:64px;width:auto;border-radius:8px;display:block">
+    </div>
+    <div class="header-txt">
+      <h1>Levantamento de Demandas para o Catálogo Padronizado das IFES</h1>
+      <p>Central de Compras da Educação &nbsp;·&nbsp; Ministério da Educação &nbsp;·&nbsp; Governo Federal</p>
+    </div>
+  </div>
+  <div class="header-bar">
+    <div class="header-bar-inner">
+      <span>Preencha com atenção · Campos com <strong style="color:#fff">*</strong> são obrigatórios</span>
+      <span class="badge-mec">FORPLAD 2026</span>
+    </div>
+  </div>
+</header>
+
+<div class="prog-wrap">
+  <div class="prog-inner">
+    <div class="prog-bar"><div class="prog-fill" id="prog"></div></div>
+    <span class="prog-label" id="prog-label">Identificação</span>
+    <span class="prog-pct" id="prog-pct">0%</span>
+  </div>
+</div>
+
+<main class="main">
+
+<div class="instrucao">
+  <strong>Instruções:</strong>
+  <ul>
+    <li>Na <strong>Seção 1</strong>, selecione sua IFES — UF e quantidade de campi serão preenchidos automaticamente.</li>
+    <li>Na <strong>Seção 2</strong>, marque os grupos de itens de interesse para adesão à Central de Compras do MEC.</li>
+    <li>Para cada grupo marcado, um formulário de detalhamento abrirá automaticamente. Preencha apenas esses.</li>
+    <li>Ao final, clique em <strong>Enviar ao sistema central</strong> para registrar as respostas diretamente na base de dados do FORPLAD. Use <strong>Exportar CSV</strong> caso queira guardar uma cópia local.</li>
+  </ul>
+</div>
+
+<!-- ═══ SEÇÃO 1 ═══ -->
+<div class="card" id="card-ident">
+  <div class="card-head">
+    <div class="num">1</div>
+    <h2>Identificação da IFES e do responsável</h2>
+  </div>
+  <div class="card-body">
+    <div class="row2">
+      <div class="field">
+        <label>IFES <span class="req">*</span></label>
+        <select id="sel-ifes" onchange="selecionarIFES()">
+          <option value="">— Selecione a instituição —</option>
+        </select>
+      </div>
+      <div class="row2" style="gap:10px">
+        <div class="field">
+          <label>UF</label>
+          <input type="text" id="f-uf" readonly placeholder="Auto">
+        </div>
+        <div class="field">
+          <label>Região</label>
+          <input type="text" id="f-regiao" readonly placeholder="Auto">
+        </div>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Quantidade de campi <span class="req">*</span></label>
+        <input type="text" id="f-campi" placeholder="Preenchido automaticamente — verifique e ajuste se necessário">
+        <div class="field-note">Pré-preenchido com base nos dados oficiais. Ajuste se houver atualização.</div>
+      </div>
+      <div class="field">
+        <label>Nome completo da IFES</label>
+        <input type="text" id="f-nome-ifes" readonly placeholder="Auto">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Responsável pelo preenchimento <span class="req">*</span></label>
+        <input type="text" id="f-resp" oninput="atualizarProgresso()" placeholder="Nome completo">
+      </div>
+      <div class="field">
+        <label>Cargo / Setor <span class="req">*</span></label>
+        <input type="text" id="f-cargo" oninput="atualizarProgresso()" placeholder="Ex: Diretoria de Compras">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>E-mail institucional <span class="req">*</span></label>
+        <input type="email" id="f-email" oninput="atualizarProgresso()" placeholder="nome@ifes.edu.br">
+      </div>
+      <div class="field">
+        <label>Telefone <span class="opt">(opcional)</span></label>
+        <input type="tel" id="f-tel" placeholder="(00) 00000-0000">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SEÇÃO 2 ═══ -->
+<div class="card">
+  <div class="card-head">
+    <div class="num">2</div>
+    <h2>Seleção dos grupos de itens</h2>
+  </div>
+  <div class="card-body">
+    <div class="instrucao" style="margin-bottom:14px">Selecione todos os grupos nos quais sua IFES tem interesse em aderir à Central de Compras do MEC. Os formulários de detalhamento aparecerão automaticamente abaixo à medida que você marcar cada grupo.</div>
+    <div class="sel-count"><strong id="sel-num">0</strong> grupos selecionados de 18</div>
+    <div class="grupos-grid" id="grid-grupos"></div>
+  </div>
+</div>
+
+<!-- ═══ SEÇÃO 3: subformulários ═══ -->
+<div id="subforms-wrap"></div>
+
+<!-- ═══ AÇÕES ═══ -->
+<div id="msg-sucesso" style="display:none;background:#e2efda;border:1px solid #70ad47;border-radius:8px;padding:14px 18px;margin-bottom:12px;font-size:14px;color:#375623">
+  <strong>✓ Respostas enviadas com sucesso!</strong> Os dados foram registrados na base central do FORPLAD. Você pode fechar este formulário ou exportar uma cópia em CSV para seus registros.
+</div>
+<div class="actions" id="acoes" style="display:none">
+  <button class="btn btn-primary" id="btn-enviar" onclick="enviarParaSheets()" style="font-size:14px;padding:12px 24px">
+    <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    Enviar ao sistema central
+  </button>
+  <button class="btn btn-success" onclick="exportarCSV()">
+    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Exportar CSV
+  </button>
+  <button class="btn btn-secondary" onclick="imprimirFormulario()">
+    <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    Salvar PDF
+  </button>
+</div>
+<div style="font-size:12px;color:#64748b;margin-top:8px;display:flex;gap:0">
+  <span style="min-width:220px">&#9432; Envia os dados diretamente ao FORPLAD</span>
+  <span style="min-width:140px">&#9432; Cópia local em planilha</span>
+  <span>&#9432; Versão impressa ou PDF</span>
+</div>
+
+</main>
+
+<footer class="footer">
+  Ministério da Educação — Governo Federal &nbsp;|&nbsp; FORPLAD — Fórum dos Pró-Reitores de Planejamento e Administração &nbsp;|&nbsp; União e Reconstrução
+</footer>
+
+<script>
+// ══════════════════════════════════════════
+// DADOS DAS IFES
+// ══════════════════════════════════════════
+const IFES = [
+  ["FURG","Universidade Federal do Rio Grande","RS","Sul",3],
+  ["UFERSA","Universidade Federal Rural do Semi-Árido","RN","Nordeste",5],
+  ["UFAC","Universidade Federal do Acre","AC","Norte",2],
+  ["UFAL","Universidade Federal de Alagoas","AL","Nordeste",3],
+  ["UFAM","Universidade Federal do Amazonas","AM","Norte",7],
+  ["UFAPE","Universidade Federal do Agreste de Pernambuco","PE","Nordeste",1],
+  ["UFBA","Universidade Federal da Bahia","BA","Nordeste",4],
+  ["UFCA","Universidade Federal do Cariri","CE","Nordeste",4],
+  ["UFCAT","Universidade Federal de Catalão","GO","Centro-Oeste",1],
+  ["UFC","Universidade Federal do Ceará","CE","Nordeste",6],
+  ["UFCG","Universidade Federal de Campina Grande","PB","Nordeste",7],
+  ["UFCSPA","Universidade Federal de Ciências da Saúde de Porto Alegre","RS","Sul",1],
+  ["UFDPAR","Universidade Federal do Delta do Parnaíba","PI","Nordeste",1],
+  ["UFES","Universidade Federal do Espírito Santo","ES","Sudeste",4],
+  ["UFF","Universidade Federal Fluminense","RJ","Sudeste",9],
+  ["UFFS","Universidade Federal da Fronteira Sul","SC","Sul",5],
+  ["UFG","Universidade Federal de Goiás","GO","Centro-Oeste",3],
+  ["UFGD","Universidade Federal da Grande Dourados","MS","Centro-Oeste",1],
+  ["UFJ","Universidade Federal de Jataí","GO","Centro-Oeste",1],
+  ["UFJF","Universidade Federal de Juiz de Fora","MG","Sudeste",2],
+  ["UFLA","Universidade Federal de Lavras","MG","Sudeste",1],
+  ["UFMA","Universidade Federal do Maranhão","MA","Nordeste",5],
+  ["UFMG","Universidade Federal de Minas Gerais","MG","Sudeste",3],
+  ["UFMS","Universidade Federal de Mato Grosso do Sul","MS","Centro-Oeste",11],
+  ["UFMT","Universidade Federal de Mato Grosso","MT","Centro-Oeste",4],
+  ["UFNT","Universidade Federal do Norte do Tocantins","TO","Norte",5],
+  ["UFOB","Universidade Federal do Oeste da Bahia","BA","Nordeste",5],
+  ["UFOPA","Universidade Federal do Oeste do Pará","PA","Norte",7],
+  ["UFOP","Universidade Federal de Ouro Preto","MG","Sudeste",2],
+  ["UFPA","Universidade Federal do Pará","PA","Norte",12],
+  ["UFPB","Universidade Federal da Paraíba","PB","Nordeste",4],
+  ["UFPE","Universidade Federal de Pernambuco","PE","Nordeste",3],
+  ["UFPEL","Universidade Federal de Pelotas","RS","Sul",3],
+  ["UFPI","Universidade Federal do Piauí","PI","Nordeste",8],
+  ["UFPR","Universidade Federal do Paraná","PR","Sul",8],
+  ["UFR","Universidade Federal de Rondonópolis","MT","Centro-Oeste",1],
+  ["UFRA","Universidade Federal Rural da Amazônia","PA","Norte",7],
+  ["UFRB","Universidade Federal do Recôncavo da Bahia","BA","Nordeste",6],
+  ["UFRGS","Universidade Federal do Rio Grande do Sul","RS","Sul",4],
+  ["UFRJ","Universidade Federal do Rio de Janeiro","RJ","Sudeste",5],
+  ["UFRN","Universidade Federal do Rio Grande do Norte","RN","Nordeste",4],
+  ["UFRPE","Universidade Federal Rural de Pernambuco","PE","Nordeste",4],
+  ["UFRR","Universidade Federal de Roraima","RR","Norte",2],
+  ["UFRRJ","Universidade Federal Rural do Rio de Janeiro","RJ","Sudeste",5],
+  ["UFS","Universidade Federal de Sergipe","SE","Nordeste",4],
+  ["UFSB","Universidade Federal do Sul da Bahia","BA","Nordeste",3],
+  ["UFSCar","Universidade Federal de São Carlos","SP","Sudeste",4],
+  ["UFSJ","Universidade Federal de São João del-Rei","MG","Sudeste",5],
+  ["UFSM","Universidade Federal de Santa Maria","RS","Sul",5],
+  ["UFSC","Universidade Federal de Santa Catarina","SC","Sul",5],
+  ["UFT","Universidade Federal do Tocantins","TO","Norte",7],
+  ["UFTM","Universidade Federal do Triângulo Mineiro","MG","Sudeste",2],
+  ["UFU","Universidade Federal de Uberlândia","MG","Sudeste",5],
+  ["UFVJM","Universidade Federal dos Vales do Jequitinhonha e Mucuri","MG","Sudeste",4],
+  ["UFV","Universidade Federal de Viçosa","MG","Sudeste",3],
+  ["UnB","Universidade de Brasília","DF","Centro-Oeste",4],
+  ["UFABC","Universidade Federal do ABC","SP","Sudeste",2],
+  ["UNIFAL","Universidade Federal de Alfenas","MG","Sudeste",3],
+  ["UNIFAP","Universidade Federal do Amapá","AP","Norte",3],
+  ["UNIFEI","Universidade Federal de Itajubá","MG","Sudeste",2],
+  ["UNIFESP","Universidade Federal de São Paulo","SP","Sudeste",7],
+  ["UNIFESSPA","Universidade Federal do Sul e Sudeste do Pará","PA","Norte",4],
+  ["UNILAB","Universidade da Integração Internacional da Lusofonia Afro-Brasileira","CE","Nordeste",4],
+  ["UNILA","Universidade Federal da Integração Latino-Americana","PR","Sul",1],
+  ["UNIPAMPA","Universidade Federal do Pampa","RS","Sul",10],
+  ["UNIRIO","Universidade Federal do Estado do Rio de Janeiro","RJ","Sudeste",3],
+  ["UNIVASF","Universidade Federal do Vale do São Francisco","PE","Nordeste",6],
+  ["UNIR","Universidade Federal de Rondônia","RO","Norte",7],
+  ["UTFPR","Universidade Tecnológica Federal do Paraná","PR","Sul",13],
+];
+
+const GRUPOS = [
+  "Materiais e utensílios de laboratório",
+  "Reagentes e gases",
+  "Equipamentos médico-hospitalares, odontológicos e de laboratório",
+  "Medicamentos e fármacos",
+  "Insumos agropecuários",
+  "Materiais de proteção e segurança (EPI)",
+  "Produtos de limpeza, higiene e moradias estudantis",
+  "Periféricos de informática",
+  "Soluções em TIC para Educação",
+  "Licenças de software e bibliotecas virtuais",
+  "Material audiovisual e fotográfico",
+  "Equipamentos audiovisuais e fotográficos",
+  "Material esportivo e de lazer",
+  "Materiais pedagógicos",
+  "Materiais gráficos e publicações",
+  "Gêneros alimentícios",
+  "Mobiliário educacional",
+  "Prestação de Serviços",
+];
+
+const TOOLTIPS = [
+  "Pipetas, béqueres, tubos de ensaio, provetas, lâminas, pinças, espátulas, cadinhos, suportes e vidrarias em geral.",
+  "Ácido sulfúrico, etanol, acetona, NaCl, clorofórmio, reagentes para ELISA, oxigênio medicinal, nitrogênio industrial, CO2.",
+  "Autoclave, centrífuga, microscópio, espectrofotômetro, cadeira odontológica, bisturi elétrico, estufa de cultivo, balança analítica.",
+  "Dipirona, amoxicilina, soro fisiológico, ivermectina veterinária, anestésico odontológico, resina composta, insumos para curativo.",
+  "Ração para roedores/aves/bovinos, maravalha, cama de frango, fertilizantes, sementes certificadas, defensivos agrícolas, substratos.",
+  "Capacetes, luvas, máscaras N95, protetor auricular, óculos de segurança, calçado de segurança, extintores, desfibriladores (DEA).",
+  "Desinfetante, sabão líquido, papel higiênico, álcool 70%, água sanitária, detergente, lençóis, fronhas, toalhas (moradias estudantis).",
+  "Teclados, mouses, headsets, webcams, pendrives, hubs USB, cabos HDMI/USB, monitores, nobreaks para estações de trabalho.",
+  "Plataformas LMS, sistemas de gestão acadêmica, soluções de videoconferência institucional, infraestrutura de rede e segurança.",
+  "Microsoft 365, antivírus corporativo, SPSS, SAS, AutoCAD, acesso a periódicos CAPES, bases acadêmicas (Scopus, Web of Science).",
+  "Pilhas e baterias, cartões de memória, papel fotográfico, lâmpadas para projetor, cabos de áudio/vídeo, mídia de gravação.",
+  "Câmera fotográfica, projetor multimídia, caixas de som, gravador digital, telão, câmera de videoconferência, microfone.",
+  "Bolas (futebol, vôlei, basquete), redes, colchonetes, tatames, kits de atletismo, jogos de tabuleiro, cordas, equipamentos de ginástica.",
+  "Blocos lógicos, mapas, kits de experimentos, jogos educativos, maquetes, globos, fantoches, material dourado, atlas, livros didáticos.",
+  "Toner/cartuchos, cartolinas, lona para banner, plotagem, serviços gráficos, encadernação, materiais de sinalização, taxa de publicação (APC).",
+  "Café, açúcar, água mineral, alimentos para restaurante universitário (RU), kits de refeição para eventos e pesquisas de campo.",
+  "Carteiras universitárias, mesas, cadeiras ergonômicas, estantes, armários de aço, quadros brancos, lousa interativa, mesa de reunião.",
+  "Intérpretes de Libras, tradutores, revisores de artigos científicos, cuidadores para estudantes com deficiência, acompanhantes terapêuticos.",
+];
+
+
+// ══════════════════════════════════════════
+// INICIALIZAÇÃO
+// ══════════════════════════════════════════
+window.addEventListener("DOMContentLoaded", function init(){
+  // Dropdown IFES
+  const sel = document.getElementById('sel-ifes');
+  IFES.forEach((f,i)=>{
+    const o = document.createElement('option');
+    o.value = i;
+    o.textContent = `${f[0]} — ${f[1]}`;
+    sel.appendChild(o);
+  });
+
+  // Grid de grupos
+  const grid = document.getElementById('grid-grupos');
+  GRUPOS.forEach((g,i)=>{
+    const d = document.createElement('div');
+    d.className = 'grupo-card';
+    d.id = 'gc'+i;
+    d.innerHTML = `<input type="checkbox" id="cb${i}"><span class="grupo-num">${i+1}</span><span>${g}</span><div class="tooltip"><strong>Exemplos de itens</strong>${TOOLTIPS[i]}</div>`;
+    d.addEventListener('click',e=>{
+      if(e.target.tagName!=='INPUT') document.getElementById('cb'+i).checked = !document.getElementById('cb'+i).checked;
+      toggleGrupo(i);
+    });
+    grid.appendChild(d);
+  });
+
+  // Sub-formulários
+  const wrap = document.getElementById('subforms-wrap');
+  GRUPOS.forEach((g,i)=>{ wrap.innerHTML += buildSubform(i,g); });
+
+  // Membros equipe
+});
+
+// ══════════════════════════════════════════
+// IFES — seleção automática
+// ══════════════════════════════════════════
+function selecionarIFES(){
+  const v = document.getElementById('sel-ifes').value;
+  if(v===''){
+    ['f-uf','f-regiao','f-campi','f-nome-ifes'].forEach(id=>document.getElementById(id).value='');
+    return;
+  }
+  const f = IFES[parseInt(v)];
+  document.getElementById('f-uf').value = f[2];
+  document.getElementById('f-regiao').value = f[3];
+  document.getElementById('f-campi').value = f[4]+(f[4]===1?' campus':' campi');
+  document.getElementById('f-nome-ifes').value = f[1];
+  atualizarProgresso();
+}
+
+// ══════════════════════════════════════════
+// GRUPOS — toggle
+// ══════════════════════════════════════════
+function toggleGrupo(i){
+  const cb = document.getElementById('cb'+i);
+  const card = document.getElementById('gc'+i);
+  const sf = document.getElementById('sf'+i);
+  if(cb.checked){card.classList.add('on');sf.classList.add('on');}
+  else{card.classList.remove('on');sf.classList.remove('on');}
+  const total = GRUPOS.filter((_,j)=>document.getElementById('cb'+j).checked).length;
+  document.getElementById('sel-num').textContent = total;
+  document.getElementById('acoes').style.display = total>0?'flex':'none';
+  // Número seção 3 (subforms)
+  atualizarProgresso();
+}
+
+// ══════════════════════════════════════════
+// BUILD SUBFORMULÁRIO
+// ══════════════════════════════════════════
+function buildSubform(i,g){
+  const p = 'g'+i;
+  return `
+<div class="card subform" id="sf${i}">
+  <div class="sf-head">
+    <span class="sf-num">GRUPO ${i+1}/18</span>
+    <span class="sf-nome">${g}</span>
+    <span class="sf-ok" id="sfok${i}">✓</span>
+  </div>
+  <div class="sf-body">
+
+    <div class="sf-q" style="background:var(--azul-bg);border:1.5px solid var(--azul-claro);border-radius:8px;padding:14px 16px;margin-bottom:4px">
+      <label style="color:var(--azul)">Descrição dos itens adquiridos neste grupo <span class="req">*</span></label>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Liste os principais itens que sua IFES adquire neste grupo. Seja específico: inclua tipo, especificação, unidade, marca de referência se houver.</div>
+      <textarea id="${p}-desc-itens" rows="4" placeholder="Ex: Pipetas volumétricas 10ml e 25ml, béqueres de borosilicato 250ml e 500ml, tubos de ensaio 15ml, luvas de nitrilo tamanhos P/M/G..." oninput="checarSF(${i})" style="width:100%;padding:9px 12px;border:1.5px solid var(--borda);border-radius:7px;font-size:13.5px;font-family:inherit;resize:vertical"></textarea>
+    </div>
+
+    <div class="sf-q">
+      <label>Quantos campi da sua IFES adquirem itens deste grupo? <span class="req">*</span></label>
+      <div style="max-width:240px;margin-top:6px">
+        <select id="${p}-campi" onchange="checarSF(${i})" style="padding:9px 12px;border:1.5px solid var(--borda);border-radius:7px;font-size:14px;font-family:inherit;width:100%;color:var(--texto);background:#fff">
+          <option value="">— selecione o número de campi —</option>
+          ${Array.from({length:20},(_,k)=>k+1).map(n=>`<option value="${n}">${n} ${n===1?'campus':'campi'}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+
+    <div class="sf-q">
+      <label>Criticidade — importância para a execução do trabalho educacional <span class="req">*</span></label>
+      <div class="opts">
+        <label class="opt-item"><input type="radio" name="${p}-crit" value="Desejável" onchange="checarSF(${i})"> <span><strong>Desejável</strong> — a disponibilidade aprimora a ação educacional, melhorando as condições atuais</span></label>
+        <label class="opt-item"><input type="radio" name="${p}-crit" value="Relevante" onchange="checarSF(${i})"> <span><strong>Relevante</strong> — a indisponibilidade prejudica a ação educacional, mas não a inviabiliza</span></label>
+        <label class="opt-item"><input type="radio" name="${p}-crit" value="Indispensável" onchange="checarSF(${i})"> <span><strong>Indispensável</strong> — a indisponibilidade inviabiliza a ação educacional</span></label>
+      </div>
+    </div>
+
+    <div class="sf-q">
+      <label>Disponibilidade no mercado <span class="req">*</span></label>
+      <div class="opts">
+        <label class="opt-item"><input type="radio" name="${p}-disp" value="Oferta regular" onchange="checarSF(${i})"> <span><strong>Oferta regular</strong> — disponível em todo o território nacional</span></label>
+        <label class="opt-item"><input type="radio" name="${p}-disp" value="Oferta concentrada" onchange="checarSF(${i})"> <span><strong>Oferta concentrada</strong> — concentrada em certas regiões, com impacto relevante no custo de distribuição</span></label>
+        <label class="opt-item"><input type="radio" name="${p}-disp" value="Oferta limitada" onchange="checarSF(${i})"> <span><strong>Oferta limitada</strong> — com risco de indisponibilidade para localidades mais remotas</span></label>
+      </div>
+    </div>
+
+    <div class="sf-q">
+      <label>Adequação — o objeto atende às necessidades do trabalho educacional? <span class="req">*</span></label>
+      <div class="opts">
+        <label class="opt-item"><input type="radio" name="${p}-adeq" value="Totalmente adequado" onchange="checarSF(${i})"> <span><strong>Totalmente adequado</strong> — não há necessidade de alteração na solução comercializada</span></label>
+        <label class="opt-item"><input type="radio" name="${p}-adeq" value="Parcialmente adequado" onchange="checarSF(${i})"> <span><strong>Parcialmente adequado</strong> — poderia ser aprimorado por ajustes pontuais no Termo de Referência</span></label>
+        <label class="opt-item"><input type="radio" name="${p}-adeq" value="Parcialmente inadequado" onchange="checarSF(${i})"> <span><strong>Parcialmente inadequado</strong> — apresenta limitações que deveriam ser discutidas com o mercado</span></label>
+      </div>
+    </div>
+
+    <div class="sf-q">
+      <label>Modalidade usual de contratação na sua IFES <span class="req">*</span></label>
+      <div class="opts">
+        ${['Pregão eletrônico','Pregão presencial','Dispensa de licitação','Inexigibilidade','Concorrência','Outra'].map(o=>`<label class="opt-item"><input type="radio" name="${p}-modal" value="${o}" onchange="checarSF(${i})"> ${o}</label>`).join('')}
+      </div>
+    </div>
+
+    <div class="sf-q">
+      <label>A contratação deste grupo resultou de alguma boa prática adotada pela sua IFES? <span class="opt">(opcional)</span></label>
+      <div class="opts">
+        <label class="opt-item"><input type="radio" name="${p}-bp" value="Sim" onchange="mostrarTxt('${p}-bp-txt',true);checarSF(${i})"> Sim — se sim, descreva abaixo</label>
+        <label class="opt-item"><input type="radio" name="${p}-bp" value="Não" onchange="mostrarTxt('${p}-bp-txt',false);checarSF(${i})"> Não</label>
+      </div>
+      <div class="cond-txt" id="${p}-bp-txt">
+        <textarea id="${p}-bp-desc" placeholder="Descreva os resultados alcançados com a boa prática..." oninput="checarSF(${i})"></textarea>
+      </div>
+    </div>
+
+    <div class="sf-q">
+      <label>Este grupo de itens contribui para a promoção da sustentabilidade? <span class="opt">(opcional)</span></label>
+      <div class="opts">
+        <label class="opt-item"><input type="radio" name="${p}-sus" value="Sim" onchange="mostrarTxt('${p}-sus-txt',true);checarSF(${i})"> Sim — se sim, descreva abaixo</label>
+        <label class="opt-item"><input type="radio" name="${p}-sus" value="Não" onchange="mostrarTxt('${p}-sus-txt',false);checarSF(${i})"> Não</label>
+      </div>
+      <div class="cond-txt" id="${p}-sus-txt">
+        <textarea id="${p}-sus-desc" placeholder="Descreva de que modo os impactos de sustentabilidade são verificados..." oninput="checarSF(${i})"></textarea>
+      </div>
+    </div>
+
+    <div class="sf-q">
+      <label>Justificativa para adesão à Central de Compras <span class="req">*</span></label>
+      <textarea id="${p}-just" placeholder="Apresente os argumentos que embasam o interesse da IFES na adesão centralizada para este grupo de itens, evidenciando os potenciais ganhos e a relevância para a ação educacional..." oninput="checarSF(${i})"></textarea>
+    </div>
+
+  </div>
+</div>`;
+}
+
+
+// ══════════════════════════════════════════
+// BUILD SUBFORMULÁRIO
+// ══════════════════════════════════════════
+function buildSubform(i,g){
+  const p = 'g'+i;
+  return `
+<div class="card subform" id="sf${i}">
+  <div class="sf-head">
+    <span class="sf-num">GRUPO ${i+1}/18</span>
+    <span class="sf-nome">${g}</span>
+    <span class="sf-ok" id="sfok${i}">✓</span>
+  </div>
+  <div class="sf-body">
+
+    <div class="sf-q" style="background:var(--azul-bg);border:1.5px solid var(--azul-claro);border-radius:8px;padding:14px 16px;margin-bottom:4px">
+      <label style="color:var(--azul)">Descrição dos itens adquiridos neste grupo <span class="req">*</span></label>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Liste os principais itens que sua IFES adquire neste grupo. Seja específico: inclua tipo, especificação, unidade, marca de referência se houver.</div>
+      <textarea id="${p}-desc-itens" rows="4" placeholder="Ex: Pipetas volumétricas 10ml e 25ml, béqueres de borosilicato 250ml e 500ml, tubos de ensaio 15ml, luvas de nitrilo tamanhos P/M/G..." oninput="checarSF(${i})" style="width:100%;padding:9px 12px;border:1.5px solid var(--borda);border-radius:7px;font-size:13.5px;font-family:inherit;resize:vertical"></textarea>
+    </div>
+
+    <div class="sf-q">
+      <label>Quantos campi da sua IFES adquirem itens deste grupo? <span class="req">*</span></label>
+      <div style="max-width:240px;margin-top:6px">
+        <select id="${p}-campi" onchange="checarSF(${i})" style="padding:9px 12px;border:1.5px solid var(--borda);border-radius:7px;font-size:14px;font-family:inherit;width:100%;color:var(--texto);background:#fff">
+          <option value="">— selecione o número de campi —</option>
+          ${Array.from({length:20},(_,k)=>k+1).map(n=>`<option value="${n}">${n} ${n===1?'campus':'campi'}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+
+    <div class="sf-q">
+      <label>Criticidade — importância para a execução do trabalho educacional <span class="req">*</span></label>
+      <div class="opts">
+        <label class="opt-item"><input type="radio" name="${p}-crit" value="Desejável" onchange="checarSF(${i})"> <span><strong>Desejável</strong> — a disponibilidade aprimora a ação educacional, melhorando as condições atuais</span></label>
+        <label class="opt-item"><input type="radio" name="${p}-crit" value="Relevante" onchange="checarSF(${i})"> <span><strong>Relevante</strong> — a indisponibilidade prejudica a ação educacional, mas não a inviabiliza</span></label>
+        <label class="opt-item"><input type="radio" name="${p}-crit" value="Indispensável" onchange="checarSF(${i})"> <span><strong>Indispensável</strong> — a indisponibilidade inviabiliza a ação educacional</span></label>
+      </div>
+    </div>
+
+    <div class="sf-q">
+      <label>Disponibilidade no mercado <span class="req">*</span></label>
+      <div class="opts">
+        <label class="opt-item"><input type="radio" name="${p}-disp" value="Oferta regular" onchange="checarSF(${i})"> <span><strong>Oferta regular</strong> — disponível em todo o território nacional</span></label>
+        <label class="opt-item"><input type="radio" name="${p}-disp" value="Oferta concentrada" onchange="checarSF(${i})"> <span><strong>Oferta concentrada</strong> — concentrada em certas regiões, com impacto relevante no custo de distribuição</span></label>
+        <label class="opt-item"><input type="radio" name="${p}-disp" value="Oferta limitada" onchange="checarSF(${i})"> <span><strong>Oferta limitada</strong> — com risco de indisponibilidade para localidades mais remotas</span></label>
+      </div>
+    </div>
+
+    <div class="sf-q">
+      <label>Adequação — o objeto atende às necessidades do trabalho educacional? <span class="req">*</span></label>
+      <div class="opts">
+        <label class="opt-item"><input type="radio" name="${p}-adeq" value="Totalmente adequado" onchange="checarSF(${i})"> <span><strong>Totalmente adequado</strong> — não há necessidade de alteração na solução comercializada</span></label>
+        <label class="opt-item"><input type="radio" name="${p}-adeq" value="Parcialmente adequado" onchange="checarSF(${i})"> <span><strong>Parcialmente adequado</strong> — poderia ser aprimorado por ajustes pontuais no Termo de Referência</span></label>
+        <label class="opt-item"><input type="radio" name="${p}-adeq" value="Parcialmente inadequado" onchange="checarSF(${i})"> <span><strong>Parcialmente inadequado</strong> — apresenta limitações que deveriam ser discutidas com o mercado</span></label>
+      </div>
+    </div>
+
+    <div class="sf-q">
+      <label>Modalidade usual de contratação na sua IFES <span class="req">*</span></label>
+      <div class="opts">
+        ${['Pregão eletrônico','Pregão presencial','Dispensa de licitação','Inexigibilidade','Concorrência','Outra'].map(o=>`<label class="opt-item"><input type="radio" name="${p}-modal" value="${o}" onchange="checarSF(${i})"> ${o}</label>`).join('')}
+      </div>
+    </div>
+
+    <div class="sf-q">
+      <label>A contratação deste grupo resultou de alguma boa prática adotada pela sua IFES? <span class="opt">(opcional)</span></label>
+      <div class="opts">
+        <label class="opt-item"><input type="radio" name="${p}-bp" value="Sim" onchange="mostrarTxt('${p}-bp-txt',true);checarSF(${i})"> Sim — se sim, descreva abaixo</label>
+        <label class="opt-item"><input type="radio" name="${p}-bp" value="Não" onchange="mostrarTxt('${p}-bp-txt',false);checarSF(${i})"> Não</label>
+      </div>
+      <div class="cond-txt" id="${p}-bp-txt">
+        <textarea id="${p}-bp-desc" placeholder="Descreva os resultados alcançados com a boa prática..." oninput="checarSF(${i})"></textarea>
+      </div>
+    </div>
+
+    <div class="sf-q">
+      <label>Este grupo de itens contribui para a promoção da sustentabilidade? <span class="opt">(opcional)</span></label>
+      <div class="opts">
+        <label class="opt-item"><input type="radio" name="${p}-sus" value="Sim" onchange="mostrarTxt('${p}-sus-txt',true);checarSF(${i})"> Sim — se sim, descreva abaixo</label>
+        <label class="opt-item"><input type="radio" name="${p}-sus" value="Não" onchange="mostrarTxt('${p}-sus-txt',false);checarSF(${i})"> Não</label>
+      </div>
+      <div class="cond-txt" id="${p}-sus-txt">
+        <textarea id="${p}-sus-desc" placeholder="Descreva de que modo os impactos de sustentabilidade são verificados..." oninput="checarSF(${i})"></textarea>
+      </div>
+    </div>
+
+    <div class="sf-q">
+      <label>Justificativa para adesão à Central de Compras <span class="req">*</span></label>
+      <textarea id="${p}-just" placeholder="Apresente os argumentos que embasam o interesse da IFES na adesão centralizada para este grupo de itens, evidenciando os potenciais ganhos e a relevância para a ação educacional..." oninput="checarSF(${i})"></textarea>
+    </div>
+
+  </div>
+</div>`;
+}
+
+// ══════════════════════════════════════════
+// MEMBROS EQUIPE
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function mostrarTxt(id, show){
+  document.getElementById(id).classList.toggle('on', show);
+}
+
+function getRadio(name){
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : '';
+}
+
+function checarSF(i){
+  const p = 'g'+i;
+  const campiVal = (document.getElementById(p+'-campi')||{}).value; const descItens = (document.getElementById(p+'-desc-itens')||{}).value?.trim(); const ok = campiVal && descItens && getRadio(p+'-crit') && getRadio(p+'-disp') && getRadio(p+'-adeq') && getRadio(p+'-modal') && (document.getElementById(p+'-just')||{}).value?.trim();
+  const el = document.getElementById('sfok'+i);
+  if(el) el.classList.toggle('done', !!ok);
+  atualizarProgresso();
+}
+
+function atualizarProgresso(){
+  const ident = document.getElementById('sel-ifes').value && document.getElementById('f-resp').value && document.getElementById('f-cargo').value && document.getElementById('f-email').value;
+  const selecionados = GRUPOS.filter((_,j)=>document.getElementById('cb'+j)?.checked);
+  const concluidos = selecionados.filter((_,j)=>{
+    const idx = GRUPOS.indexOf(_);
+    return document.getElementById('sfok'+idx)?.classList.contains('done');
+  });
+  const total = 2 + selecionados.length;
+  const done = (ident?1:0) + (selecionados.length>0?1:0) + concluidos.length;
+  const pct = total>0 ? Math.round(done/total*100) : (ident?20:0);
+  document.getElementById('prog').style.width = pct+'%';
+  document.getElementById('prog-pct').textContent = pct+'%';
+  const labels = ['Identificação','Seleção de grupos','Detalhamento','Finalizado'];
+  document.getElementById('prog-label').textContent = pct===100?labels[3]:pct>60?labels[2]:pct>20?labels[1]:labels[0];
+}
+
+// ══════════════════════════════════════════
+// EXPORTAR CSV
+// ══════════════════════════════════════════
+function exportarCSV(){
+  const ifesIdx = document.getElementById('sel-ifes').value;
+  const ifes = ifesIdx!=='' ? IFES[parseInt(ifesIdx)] : ['','','','',0];
+
+  const cabecalho = ['IFES','Nome IFES','UF','Região','Campi (total)','Responsável','Cargo/Setor','Email','Telefone','Grupo de Itens','Descrição dos itens adquiridos','Campi (grupo)','Criticidade','Disponibilidade','Adequação','Modalidade de Contratação','Boas Práticas','Descrição Boas Práticas','Sustentabilidade','Descrição Sustentabilidade','Justificativa'];
+
+  const base = [
+    ifes[0], ifes[1], ifes[2], ifes[3],
+    document.getElementById('f-campi').value,
+    document.getElementById('f-resp').value,
+    document.getElementById('f-cargo').value,
+    document.getElementById('f-email').value,
+    document.getElementById('f-tel').value,
+  ];
+
+  const linhas = [cabecalho];
+  GRUPOS.forEach((g,i)=>{
+    if(!document.getElementById('cb'+i)?.checked) return;
+    const p = 'g'+i;
+    const bp = getRadio(p+'-bp');
+    const sus = getRadio(p+'-sus');
+    linhas.push([...base,
+      g,
+      (document.getElementById(p+'-desc-itens')||{}).value||'',
+      (document.getElementById(p+'-campi')||{}).value||'',
+      getRadio(p+'-crit'),
+      getRadio(p+'-disp'),
+      getRadio(p+'-adeq'),
+      getRadio(p+'-modal'),
+      bp,
+      bp==='Sim'?(document.getElementById(p+'-bp-desc')?.value||''):'',
+      sus,
+      sus==='Sim'?(document.getElementById(p+'-sus-desc')?.value||''):'',
+      document.getElementById(p+'-just')?.value||'',
+    ]);
+  });
+
+  const csv = linhas.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  const sigla = ifes[0]||'IFES';
+  const ts = new Date().toISOString().slice(0,10);
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download = `Levantamento_${sigla}_${ts}.csv`;
+  a.click();
+}
+
+function imprimirFormulario(){ window.print(); }
+
+
+// ═══════════════════════════════════════════
+// INTEGRAÇÃO GOOGLE SHEETS
+// ═══════════════════════════════════════════
+
+// Cole aqui a URL gerada ao implantar o Apps Script
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQ12z8CHKPlVxku3qu2IS--YT_99YF9M4D3MiYODWAVDsQRK-EtiTsrzYOn56hQnSIbQ/exec';
+
+async function enviarParaSheets() {
+  const ifesIdx = document.getElementById('sel-ifes').value;
+  if (!ifesIdx) { alert('Selecione a IFES antes de enviar.'); return; }
+  if (!document.getElementById('f-resp').value) { alert('Preencha o nome do responsável.'); return; }
+  const grupos_sel = GRUPOS.filter((_,j) => document.getElementById('cb'+j) && document.getElementById('cb'+j).checked);
+  if (grupos_sel.length === 0) { alert('Selecione ao menos um grupo de itens.'); return; }
+  if (SCRIPT_URL === 'COLE_AQUI_A_URL_DO_APPS_SCRIPT') {
+    alert('O formulário ainda nao esta conectado ao sistema.\nUse Exportar CSV enquanto a URL nao for configurada.');
+    return;
+  }
+  const ifes = IFES[parseInt(ifesIdx)];
+  const base = [
+    ifes[0], ifes[1], ifes[2], ifes[3],
+    document.getElementById('f-campi').value,
+    document.getElementById('f-resp').value,
+    document.getElementById('f-cargo').value,
+    document.getElementById('f-email').value,
+    document.getElementById('f-tel').value,
+  ];
+  const linhas = [];
+  GRUPOS.forEach((g,i) => {
+    const cb = document.getElementById('cb'+i);
+    if (!cb || !cb.checked) return;
+    const p = 'g'+i;
+    const bp  = getRadio(p+'-bp');
+    const sus = getRadio(p+'-sus');
+    linhas.push([...base, g,
+      (document.getElementById(p+'-desc-itens')||{}).value||'',
+      (document.getElementById(p+'-campi')||{}).value||'',
+      getRadio(p+'-crit'), getRadio(p+'-disp'), getRadio(p+'-adeq'), getRadio(p+'-modal'),
+      bp, bp==='Sim'?((document.getElementById(p+'-bp-desc')||{}).value||''):'',
+      sus, sus==='Sim'?((document.getElementById(p+'-sus-desc')||{}).value||''):'',
+      (document.getElementById(p+'-just')||{}).value||'',
+    ]);
+  });
+  const btn = document.getElementById('btn-enviar');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: {'Content-Type': 'text/plain'},
+      body: JSON.stringify({linhas})
+    });
+    btn.textContent = 'Enviado com sucesso!';
+    btn.style.background = '#375623';
+    document.getElementById('msg-sucesso').style.display = 'block';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = 'Enviar ao sistema central';
+      btn.style.background = '';
+    }, 6000);
+  } catch(err) {
+    btn.disabled = false;
+    btn.textContent = 'Enviar ao sistema central';
+    alert('Erro ao enviar. Use Exportar CSV como alternativa.');
+  }
+}
+
+</script>
+</body>
+</html>
